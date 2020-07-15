@@ -96,31 +96,22 @@ public class ItemThirstQuencher extends ItemRF implements IBauble {
 				}
 
 				FluidStack contained = getFluid();
-				if (contained == null) {
-					int fillAmount = Math.min(FLUID_CAPACITY, resource.amount);
+				if (contained.isFluidEqual(resource)) {
+					int currentAmount = getFluidStored(this.container);
 
-					if (doFill) {
-						FluidStack filled = resource.copy();
-						filled.amount = fillAmount;
-						setFluid(filled);
+					int fillAmount = Math.min(FLUID_CAPACITY - currentAmount, resource.amount);
+
+					if (doFill && fillAmount > 0) {
+						currentAmount += fillAmount;
+						setFluidStored(stack, currentAmount);
+						contained.amount = currentAmount;
+						setFluid(contained);
 					}
-					setFluidStored(stack, fillAmount);
+
 					return fillAmount;
 				}
-				else {
-					if (contained.isFluidEqual(resource)) {
-						int fillAmount = Math.min(FLUID_CAPACITY - contained.amount, resource.amount);
 
-						if (doFill && fillAmount > 0) {
-							contained.amount += fillAmount;
-							setFluid(contained);
-						}
-						setFluidStored(stack, fillAmount);
-						return fillAmount;
-					}
-
-					return 0;
-				}
+				return 0;
 			}
 
 		};
